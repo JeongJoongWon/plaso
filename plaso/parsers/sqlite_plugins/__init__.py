@@ -30,3 +30,4 @@ from plaso.parsers.sqlite_plugins import twitter_android
 from plaso.parsers.sqlite_plugins import twitter_ios
 from plaso.parsers.sqlite_plugins import windows_timeline
 from plaso.parsers.sqlite_plugins import zeitgeist
+from plaso.parsers.sqlite_plugins import wintimeline
