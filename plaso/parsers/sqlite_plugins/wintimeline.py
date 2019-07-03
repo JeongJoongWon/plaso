@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Parser for the Windows Timeline Database.
+"""Parser for the Windows 10 Timeline SQLite Database.
 
 The Windows Timeline is stored in SQLite database files named History.db
+
+Difference between wintimeline.py and windows_timeline.py
+windows_timeline.py: Parses UserEngaged Data.
+wintimeline.py: Parses data in active, update, deleted, ignore with time information
 """
 from __future__ import unicode_literals
 
@@ -21,7 +25,12 @@ class WindowsTimelineActivityEventData(events.EventData):
   """Windows Timeline event data.
 
   Attributes:
-      timeline (str):
+      timeline (str): Combined string of data below
+                        Program
+                        Active Type  open, focus
+                        Status: active, deleted, update, ignore
+                        Time Information: start, end, expiration, lastmodified
+                        Program Description
   """
 
   DATA_TYPE = 'windows:timeline:activity'
@@ -35,7 +44,12 @@ class WindowsTimelineActivityOperationEventData(events.EventData):
   """Windows Timeline event data.
 
   Attributes:
-      timeline (str):
+      timeline (str): Combined string of data below
+                        Program
+                        Active Type  open, focus
+                        Status: active, deleted, update, ignore
+                        Time Information: start, end, expiration, lastmodified
+                        Program Description
   """
 
   DATA_TYPE = 'windows:timeline:activityoperation'
@@ -49,7 +63,10 @@ class WindowsTimelineActivityPackageIdEventData(events.EventData):
   """Windows Timeline event data.
 
   Attributes:
-      timeline (str):
+      timeline (str): Combined string of data below
+                        FileNmae
+                        Platform
+                        Expiration Time
   """
 
   DATA_TYPE = 'windows:timeline:activitypackageid'
@@ -60,13 +77,13 @@ class WindowsTimelineActivityPackageIdEventData(events.EventData):
     self.timeline_data = None
 
 class WindowsTimelinePluginSqlite(interface.SQLitePlugin):
-  """Parse Windows Timeline Files
+  """Parse Windows 10 Timeline Files
 
-  Windows Timeline file is stored is a SQLite database file named ActivitiesCache.db
+  Windows 10 Timeline file is stored is a SQLite database file named ActivitiesCache.db
   """
 
   NAME = 'wintimeline'
-  DESCRIPTION = 'Parser for Windows timeline SQLite database files.'
+  DESCRIPTION = 'Parser for Windows 10 timeline SQLite database files.'
 
   QUERIES = [
     (('select AppId, ActivityType, ActivityStatus, LastModifiedTime, ExpirationTime, PayLoad, StartTime, EndTime, LastModifiedOnClient, CreatedInCloud from Activity'), 'ParseActivityRow'),
@@ -75,7 +92,7 @@ class WindowsTimelinePluginSqlite(interface.SQLitePlugin):
   ]
 
   REQUIRED_TABLES = frozenset([
-   # 'Activity', 'ActivityOperation',
+    'Activity', 'ActivityOperation',
     'Activity_PackageId'])
 
   SCHEMAS = [{
@@ -127,11 +144,11 @@ class WindowsTimelinePluginSqlite(interface.SQLitePlugin):
   def ParseActivityRow(self, parser_mediator, query, row, **unused_kwargs):
     """Parses a activity row from database
 
-    :param parser_mediator:
-    :param query:
-    :param row:
-    :param unused_kwargs:
-    :return:
+      Args
+      parser_mediator (ParserMediator): mediates interactions between parsers
+          and other components, such as storage and dfvfs.
+      query (str): query that created the row.
+      row (sqlite3.Row): row
     """
     query_hash = hash(query)
     event_data = WindowsTimelineActivityEventData()
@@ -168,7 +185,6 @@ class WindowsTimelinePluginSqlite(interface.SQLitePlugin):
     payload = json.loads(payload_string)
 
     data = "[Program]: " + appId[0].split('":"')[1][:-1]
-#    data += " [Platform]: " + appId[1].split('":"')[1][:-1]
     data += " [Active Type]: " + actType
     data += " [Active Status]: " + actStatus
     data += " [LastModifiedTime]: " + str(lmTime)
@@ -193,11 +209,11 @@ class WindowsTimelinePluginSqlite(interface.SQLitePlugin):
   def ParseActivityOperationRow(self, parser_mediator, query, row, **unused_kwargs):
     """Parses a activity operation row from database
 
-    :param parser_mediator:
-    :param query:
-    :param row:
-    :param unused_kwargs:
-    :return:
+       Args
+       parser_mediator (ParserMediator): mediates interactions between parsers
+          and other components, such as storage and dfvfs.
+       query (str): query that created the row.
+       row (sqlite3.Row): row
     """
     query_hash = hash(query)
     event_data = WindowsTimelineActivityOperationEventData()
@@ -234,7 +250,6 @@ class WindowsTimelinePluginSqlite(interface.SQLitePlugin):
     payload = json.loads(payload_string)
 
     data = "[Program]: " + appId[0].split('":"')[1][:-1]
-#    data += " [Platform]: " + appId[1].split('":"')[1][:-1]
     data += " [Active Type]: " + operType
     data += " [Active Status]: " + actType
     data += " [LastModifiedTime]: " + str(lmTime)
@@ -260,11 +275,11 @@ class WindowsTimelinePluginSqlite(interface.SQLitePlugin):
   def ParseActivityPackageIdRow(self, parser_mediator, query, row, **unused_kwargs):
     """Parses a activity packageid row from database
 
-    :param parser_mediator:
-    :param query:
-    :param row:
-    :param unused_kwargs:
-    :return:
+       Args
+       parser_mediator (ParserMediator): mediates interactions between parsers
+          and other components, such as storage and dfvfs.
+       query (str): query that created the row.
+       row (sqlite3.Row): row
     """
     query_hash = hash(query)
     event_data = WindowsTimelineActivityPackageIdEventData()

@@ -7,7 +7,7 @@ from plaso.formatters import interface
 from plaso.formatters import manager
 
 class WindowsTimelineActivityEventFormatter(interface.ConditionalEventFormatter):
-  """Formatter for generic Windows Timeline events."""
+  """Formatter for Activity Table Windows 10 Timeline events."""
 
   DATA_TYPE = 'windows:timeline:activity'
 
@@ -19,7 +19,7 @@ class WindowsTimelineActivityEventFormatter(interface.ConditionalEventFormatter)
   SOURCE_SHORT = 'Windows Timeline'
 
 class WindowsTimelineActivityOperationEventFormatter(interface.ConditionalEventFormatter):
-    """Formatter for activityoperation Windows Timeline database rows"""
+    """Formatter for Activity Operation Table Windows 10 Timeline database rows"""
 
     DATA_TYPE =  'windows:timeline:activityoperation'
 
@@ -31,7 +31,7 @@ class WindowsTimelineActivityOperationEventFormatter(interface.ConditionalEventF
     SOURCE_SHORT = 'windows Timeline'
 
 class WindowsTimelineActivityPackageIdEventFormatter(interface.ConditionalEventFormatter):
-  """Formatter for generic Windows Timeline events."""
+  """Formatter for Activitiy PackagedID Table Windows 10 Timeline events."""
 
   DATA_TYPE = 'windows:timeline:activitypackageid'
 
