@@ -123,3 +123,4 @@ from plaso.formatters import xchatscrollback
 from plaso.formatters import zeitgeist
 from plaso.formatters import zsh_extended_history
 from plaso.formatters import wintimeline
+from plaso.formatters import winiconcache

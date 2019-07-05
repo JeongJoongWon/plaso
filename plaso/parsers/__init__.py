@@ -67,6 +67,8 @@ from plaso.parsers import xchatlog
 from plaso.parsers import xchatscrollback
 from plaso.parsers import zsh_extended_history
 
+from plaso.parsers import winiconcache
+
 # Register plugins.
 from plaso.parsers import bencode_plugins
 from plaso.parsers import czip_plugins
