@@ -20,6 +20,26 @@ class OLECFItemFormatter(interface.EventFormatter):
   SOURCE_LONG = 'OLECF Item'
   SOURCE_SHORT = 'OLECF'
 
+class IJBOLECFThumbsnailFormatter(interface.ConditionalEventFormatter):
+
+  DATA_TYPE = 'windows:thumbnail:execution'
+
+  FORMAT_STRING_PIECES = [
+      'Thumbnail SHA1: {thumbs_sha1}',
+      'Thumbnail Info: {thumbs_info}'
+  ]
+
+  SOURCE_LONG = 'WinThumbnail'
+  SOURCE_SHORT = 'LOG'
+
+  def GetMessages(self, formatter_mediator, event):
+      if self.DATA_TYPE != event.data_type:
+          raise errors.WrongFormatter('Unsupported data type: {0:s}.'.format(
+              event.data_type))
+
+      event_values = event.CopyToDict()
+      event_values['thumbs_info'] = event_values.get('thumbs_info', None)
+      return self._ConditionalFormatMessages(event_values)
 
 class OLECFDestListEntryFormatter(interface.ConditionalEventFormatter):
   """Formatter for an OLECF DestList stream event."""
@@ -183,4 +203,4 @@ class OLECFSummaryInfoFormatter(interface.ConditionalEventFormatter):
 
 manager.FormattersManager.RegisterFormatters([
     OLECFItemFormatter, OLECFDestListEntryFormatter,
-    OLECFDocumentSummaryInfoFormatter, OLECFSummaryInfoFormatter])
+    OLECFDocumentSummaryInfoFormatter, OLECFSummaryInfoFormatter, IJBOLECFThumbsnailFormatter])
