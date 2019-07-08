@@ -59,7 +59,7 @@ class WinIconcacheParser(interface.FileObjectParser):
       FormatSpecification: format specification.
     """
     format_specification = specification.FormatSpecification(cls.NAME)
-    format_specification.AddNewSignature(b'CMMM\x20', offset=0)
+    format_specification.AddNewSignature(b'CMMM', offset=0)
     return format_specification
 
   def OpenBF(self, file_name):
@@ -128,24 +128,21 @@ class WinIconcacheParser(interface.FileObjectParser):
     except OSError:
       print('Error: create directory. ' + dir)
 
-  def ParseRecords(self):
+  def ParseRecords(self, file_object):
     self.createFolder('winiconcache')
     icon_ret_split = []
     off = 0
-    fname = 'tmp_ijb_icon.db'
-    fh = self.OpenBF(fname)
+    file_object.seek(0)
 
     off += 24
-    bData = self.ReadB(fh, 24)
-    fVer = bData[4:8]
-    fType = bData[8:12]
+    bData = file_object.read(24)
     fEntry = bData[16:20]
 
     fEn = self.GetEntryOff(fEntry)
     if off == fEn:
       pass
     elif off < fEn:
-      self.ReadB(fh, (fEn-off))
+      file_object.read(fEn-off)
       off = fEn
     elif off > fEn:
       pass
@@ -153,17 +150,15 @@ class WinIconcacheParser(interface.FileObjectParser):
     bIdx = 1
     while True:
       off += 8
-      bData = self.ReadB(fh, 8)
+      bData = file_object.read(8)
       eSize = self.GetSize(bData[4:8])
 
-      eData = self.ReadB(fh, 32)
+      eData = file_object.read(32)
       if self.CheckEndData(eData) == False:
         break
 
       off += (eSize - 40)
-      eData += self.ReadB(fh, eSize-40)
-      iSSOff = self.GetSize(eData[12:16])
-      iSSSize = self.GetSize(eData[16:20])
+      eData += file_object.read(eSize-40)
       iResX = self.GetSize(eData[20:24])
       iResY = self.GetSize(eData[24:28])
       iName = str(self.GetName(eData[48:80]))
@@ -171,10 +166,11 @@ class WinIconcacheParser(interface.FileObjectParser):
       iNm = str(iName.decode('utf-8'))
       iData = eData[82:]
 
-      headBuf = bytes(iData[:4])
-      if headBuf != b'BM\x96\x04':
-        iData = b'BM\x96\x04' + eData[82:]
-      fName = 'winiconcache\\' + str(bIdx) + '.jpg'
+      headBuf = bytes(iData[:2])
+      if headBuf != b'BM':
+        iData = b'BM' + eData[82:]
+
+      fName = 'winiconcache\\' + iName + '_' + self.GetSHA1(eData[82:])[:4] + '.jpg'
       f=open(fName, 'w')
       f.write(iData)
       f.close()
@@ -183,18 +179,7 @@ class WinIconcacheParser(interface.FileObjectParser):
       icon_ret_split.append(icon_data)
       bIdx += 1
 
-    fh.close()
-    os.remove('tmp_ijb_icon.db')
     return icon_ret_split
-
-  def saveFile(self, file_object):
-    current_offset = file_object.get_offset()
-    file_object.seek(0)
-    file_data = file_object.read()
-    f=open('tmp_ijb_icon.db', 'wb')
-    f.write(file_data)
-    f.close()
-    file_object.seek(current_offset)
 
   def ParseFileObject(self, parser_mediator, file_object):
     """Parses a Windows Iconcache file-like object.
@@ -207,8 +192,7 @@ class WinIconcacheParser(interface.FileObjectParser):
     event_data = WinIconcacheExecutionEventData()
     date_time = dfdatetime_semantic.SemanticTime('Not set')
 
-    self.saveFile(file_object)
-    icon_ret_split = self.ParseRecords()
+    icon_ret_split = self.ParseRecords(file_object)
 
     for ret in icon_ret_split:
       event_data.icon_info = ret
