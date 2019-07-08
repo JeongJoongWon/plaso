@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 from plaso.lib import errors
 from plaso.cli.helpers import interface
 from plaso.cli.helpers import server_config
+from plaso.cli.helpers import manager
 
 
 class DatabaseArgumentsHelper(interface.ArgumentsHelper):
@@ -41,6 +42,18 @@ class DatabaseArgumentsHelper(interface.ArgumentsHelper):
         '--db_name', '--db-name', dest='db_name', action='store',
         type=str, default=cls._DEFAULT_NAME, required=False, help=(
             'The name of the database to connect to.'))
+    argument_group.add_argument(
+        '--case_id', '--case-number', dest='case_id', action='store',
+        type=str, default='', required=False, help=(
+            'The number of the case.'))
+    argument_group.add_argument(
+        '--evd_id', '--evidence-number', dest='evd_id', action='store',
+        type=str, default='', required=False, help=(
+            'The number of the evidence.'))
+    argument_group.add_argument(
+        '--par_id', '--partition-number', dest='par_id', action='store',
+        type=str, default='', required=False, help=(
+            'The number of the partition of the evidence.'))
 
     server_config.ServerArgumentsHelper.AddArguments(argument_group)
 
@@ -63,13 +76,22 @@ class DatabaseArgumentsHelper(interface.ArgumentsHelper):
     if not hasattr(output_module, 'SetDatabaseName'):
       raise errors.BadConfigObject('Unable to set database information.')
 
+    if not hasattr(output_module, 'SetCaseInformation'):
+      raise errors.BadConfigObject('Unable to set case information.')
+
     username = cls._ParseStringOption(
         options, 'username', default_value=cls._DEFAULT_USERNAME)
     password = cls._ParseStringOption(
         options, 'password', default_value=cls._DEFAULT_PASSWORD)
     name = cls._ParseStringOption(
         options, 'db_name', default_value=cls._DEFAULT_NAME)
-
+    case_id = cls._ParseStringOption(
+        options, 'case_id', default_value='')
+    evd_id = cls._ParseStringOption(
+        options, 'evd_id', default_value='')
+    par_id = cls._ParseStringOption(
+        options, 'par_id', default_value='')
     output_module.SetCredentials(username=username, password=password)
     output_module.SetDatabaseName(name)
+    output_module.SetCaseInformation(case_id, evd_id, par_id)
     server_config.ServerArgumentsHelper.ParseOptions(options, output_module)
