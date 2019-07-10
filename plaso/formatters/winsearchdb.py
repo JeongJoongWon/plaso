@@ -8,7 +8,6 @@ from plaso.formatters import manager
 
 import sys
 
-'''class WindowsSearchdbFormatter(interface.ConditionalEventFormatter):'''
 class WindowsSearchdbFormatter(interface.ConditionalEventFormatter):
   """Formatter for a Windows Search DB event."""
 
@@ -39,12 +38,5 @@ class WindowsSearchdbFormatter(interface.ConditionalEventFormatter):
   SOURCE_SHORT = 'LOG'
 
   FORMAT_LIST = ['ID', 'Name', 'Owner', 'IURL', 'IAttr', 'IsFolder', 'Size', 'GatherDT', 'CreateDT', 'ModifyDT', 'AccessDT', 'SUMMARY', 'Title', 'Subject', 'Comment', 'Label', 'Text', 'APPName']
-'''
-  def GetMessages(self, formatter_mediator, event):
-      event_values = event.CopyToDict()
-      for key in self.FORMAT_LIST:
-        ret = event_values.get(key, None)
-        event_values[key] = ret
-      return self._ConditionalFormatMessages(event_values)
-'''
+
 manager.FormattersManager.RegisterFormatter(WindowsSearchdbFormatter)

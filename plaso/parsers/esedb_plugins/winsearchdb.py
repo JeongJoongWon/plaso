@@ -10,8 +10,6 @@ from plaso.containers import events
 from plaso.containers import time_events
 from plaso.lib import definitions
 
-import time
-import os
 import sys
 from datetime import datetime as dt
 from plaso.parsers import esedb
@@ -50,9 +48,6 @@ class WinSearchDBExecutionEventData(events.EventData):
     self.Label = None
     self.Text = None
     self.APPName = None
-    '''
-      Attributes:
-    '''
 
 class WinSearchESEDBPlugin(interface.ESEDBPlugin):
   """A parser for Windows Search DB files."""
@@ -66,28 +61,17 @@ class WinSearchESEDBPlugin(interface.ESEDBPlugin):
   }
 
   HEX_MAP = {"0":0, "1":1, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "a":10, "b":11, "c":12, "d":13, "e":14, "f":15}
-  # = {9:"Binary Data", 1:"Boolean", 5:"Currency", 8:"Datetime", 7:"Double 64bit", 6:"Float 32bit", 16:"GUID", 3:"Int 16bit signed", 17:"Int 16bit unsigned", 4:"Int 32bit signed", 14:"Int 32bit unsigned", 15:"Int 64bit signed", 2:"Int 8bit unsigned", 11:"Large Binary Data", 12:"Large Text", 0:"NULL", 13:"Super Large Value", 10:"Text"}
-  
-  INT_TYPES = [3, 17, 4, 14, 15, 2]
-  REAL_TYPES = [7, 6]
-  STRING_TYPES = [12, 10]
-  BINARY_TYPES = [9, 11]
-  TYPES=[5, 8, 0, 13, 16]
-  TARGET_COLUMNS = ['WorkID', 'System_FileName', 'System_FileOwner', 'System_ItemUrl', 'System_FileAttributes',
+
+  _TARGET_COLUMNS = ['WorkID', 'System_FileName', 'System_FileOwner', 'System_ItemUrl', 'System_FileAttributes',
                     'System_IsFolder', 'System_Size', 'System_Search_GatherTime', 'System_DateCreated', 'System_DateModified', 'System_DateAccessed',
                     'System_Search_AutoSummary', 'System_Title', 'System_Subject', 'System_Comment', 'System_Contact_Label', 'System_PriorityText',
                     'System_ApplicationName']
-  COLUMN2PRINT = {"ID":"WorkID", "Name":"System_FileName", "IType":"System_ItemTypeText", "Owner":"System_FileOwner", "IURL":"System_ItemUrl",
+  _COLUMN2PRINT = {"ID":"WorkID", "Name":"System_FileName", "IType":"System_ItemTypeText", "Owner":"System_FileOwner", "IURL":"System_ItemUrl",
                   "IAttr":"System_FileAttributes", "IsFolder":"System_IsFolder", "Size":"System_Size", "GatherDT":"System_Search_GatherTime",
                   "CreateDT":"System_DateCreated", "ModifyDT":"System_DateModified", "AccessDT":"System_DateAccessed",
                   "SUMMARY":"System_Search_AutoSummary", "Title":"System_Title", "Subject":"System_Subject", "Comment":"System_Comment",
                   "Label":"System_Contact_Label", "Text":"System_PriorityText", "APPName":"System_ApplicationName" }
   
-  def unix2ldap(self, unix):
-    converter = ((1970 - 1601) * 365 - 3 + round((1970 - 1601) / 4)) * 86400
-    epoch = round(converter + unix)
-    return epoch * 10000000
-
   def _ldap2unix(self, ldap):
     uSecs = ldap/10000000
     uTimestamp = uSecs - 11644473600
@@ -123,7 +107,7 @@ class WinSearchESEDBPlugin(interface.ESEDBPlugin):
                  "System_DateAccessed":"", "System_Search_AutoSummary":"", "System_Title":"", "System_Subject":"", "System_Comment":"", "System_Contact_Label":"",
                  "System_PriorityText":"", "System_ApplicationName":"" }
       for c in cmn:
-        for s_cmn in self.TARGET_COLUMNS:
+        for s_cmn in self._TARGET_COLUMNS:
           if s_cmn in c[len(c)*-1:]:
             cmn_ret[s_cmn] = record_values[c]
       win_ret.append(dict(cmn_ret))
@@ -141,71 +125,71 @@ class WinSearchESEDBPlugin(interface.ESEDBPlugin):
     win_ret = self.ParseRecords(parser_mediator, database, table)
     for ret in win_ret:
       event_data = WinSearchDBExecutionEventData()
-      event_data.ID = str(ret[self.COLUMN2PRINT["ID"]])
+      event_data.ID = str(ret[self._COLUMN2PRINT["ID"]])
 
-      if ret[self.COLUMN2PRINT["Name"]] is not None:
-        event_data.Name = ret[self.COLUMN2PRINT["Name"]].encode('utf-8')
+      if ret[self._COLUMN2PRINT["Name"]] is not None:
+        event_data.Name = ret[self._COLUMN2PRINT["Name"]].encode('utf-8')
       else:
         event_data.Name = 'None'
-      if ret[self.COLUMN2PRINT["Owner"]] is not None:
-        event_data.Owner = ret[self.COLUMN2PRINT["Owner"]].encode('utf-8')
+      if ret[self._COLUMN2PRINT["Owner"]] is not None:
+        event_data.Owner = ret[self._COLUMN2PRINT["Owner"]].encode('utf-8')
       else:
         event_data.Owner = 'None'
-      if ret[self.COLUMN2PRINT["IURL"]] is not None:
-        event_data.IURL = ret[self.COLUMN2PRINT["IURL"]].encode('utf-8')
+      if ret[self._COLUMN2PRINT["IURL"]] is not None:
+        event_data.IURL = ret[self._COLUMN2PRINT["IURL"]].encode('utf-8')
       else:
         event_data.IURL = 'None'
 
-      event_data.IAttr = str(ret[self.COLUMN2PRINT["IAttr"]])
-      event_data.IsFolder = str(ret[self.COLUMN2PRINT["IsFolder"]])
-      event_data.Size = str(self._GetSize(ret[self.COLUMN2PRINT["Size"]]))
-      if self._GetSize(ret[self.COLUMN2PRINT["GatherDT"]]) == 0:
+      event_data.IAttr = str(ret[self._COLUMN2PRINT["IAttr"]])
+      event_data.IsFolder = str(ret[self._COLUMN2PRINT["IsFolder"]])
+      event_data.Size = str(self._GetSize(ret[self._COLUMN2PRINT["Size"]]))
+      if self._GetSize(ret[self._COLUMN2PRINT["GatherDT"]]) == 0:
         event_data.GatherDT = str(0)
       else:
-        event_data.GatherDT = str(dt.utcfromtimestamp(self._ldap2unix(self._GetSize(ret[self.COLUMN2PRINT["GatherDT"]]))))
+        event_data.GatherDT = str(dt.utcfromtimestamp(self._ldap2unix(self._GetSize(ret[self._COLUMN2PRINT["GatherDT"]]))))
 
-      if self._GetSize(ret[self.COLUMN2PRINT["ModifyDT"]]) == 0:
+      if self._GetSize(ret[self._COLUMN2PRINT["ModifyDT"]]) == 0:
         event_data.ModifyDT = str(0)
       else:
-        event_data.ModifyDT = str(dt.utcfromtimestamp(self._ldap2unix(self._GetSize(ret[self.COLUMN2PRINT["ModifyDT"]]))))
-      if self._GetSize(ret[self.COLUMN2PRINT["AccessDT"]]) == 0:
+        event_data.ModifyDT = str(dt.utcfromtimestamp(self._ldap2unix(self._GetSize(ret[self._COLUMN2PRINT["ModifyDT"]]))))
+      if self._GetSize(ret[self._COLUMN2PRINT["AccessDT"]]) == 0:
         event_data.AccessDT = str(0)
       else:
-        event_data.AccessDT = str(dt.utcfromtimestamp(self._ldap2unix(self._GetSize(ret[self.COLUMN2PRINT["AccessDT"]]))))
-      if ret[self.COLUMN2PRINT["SUMMARY"]] is not None:
-        event_data.SUMMARY = ret[self.COLUMN2PRINT["SUMMARY"]].encode('utf-8')
+        event_data.AccessDT = str(dt.utcfromtimestamp(self._ldap2unix(self._GetSize(ret[self._COLUMN2PRINT["AccessDT"]]))))
+      if ret[self._COLUMN2PRINT["SUMMARY"]] is not None:
+        event_data.SUMMARY = ret[self._COLUMN2PRINT["SUMMARY"]].encode('utf-8')
       else:
         event_data.SUMMARY = 'None'
-      if ret[self.COLUMN2PRINT["Title"]] is not None:
-        event_data.Title = ret[self.COLUMN2PRINT["Title"]].encode('utf-8')
+      if ret[self._COLUMN2PRINT["Title"]] is not None:
+        event_data.Title = ret[self._COLUMN2PRINT["Title"]].encode('utf-8')
       else:
         event_data.Title = 'None'
-      if ret[self.COLUMN2PRINT["Subject"]] is not None:
-        event_data.Subject = ret[self.COLUMN2PRINT["Subject"]].encode('utf-8')
+      if ret[self._COLUMN2PRINT["Subject"]] is not None:
+        event_data.Subject = ret[self._COLUMN2PRINT["Subject"]].encode('utf-8')
       else:
         event_data.Subject = 'None'
-      if ret[self.COLUMN2PRINT["Comment"]] is not None:
-        event_data.Comment = ret[self.COLUMN2PRINT["Comment"]].encode('utf-8')
+      if ret[self._COLUMN2PRINT["Comment"]] is not None:
+        event_data.Comment = ret[self._COLUMN2PRINT["Comment"]].encode('utf-8')
       else:
         event_data.Comment = 'None'
-      if ret[self.COLUMN2PRINT["Label"]] is not None:
-        event_data.Label = ret[self.COLUMN2PRINT["Label"]].encode('utf-8')
+      if ret[self._COLUMN2PRINT["Label"]] is not None:
+        event_data.Label = ret[self._COLUMN2PRINT["Label"]].encode('utf-8')
       else:
         event_data.Label = 'None'
-      if ret[self.COLUMN2PRINT["Text"]] is not None:
-        event_data.Text = ret[self.COLUMN2PRINT["Text"]].encode('utf-8')
+      if ret[self._COLUMN2PRINT["Text"]] is not None:
+        event_data.Text = ret[self._COLUMN2PRINT["Text"]].encode('utf-8')
       else:
         event_data.Text = 'None'
-      if ret[self.COLUMN2PRINT["APPName"]] is not None:
-        event_data.APPName = ret[self.COLUMN2PRINT["APPName"]].encode('utf-8')
+      if ret[self._COLUMN2PRINT["APPName"]] is not None:
+        event_data.APPName = ret[self._COLUMN2PRINT["APPName"]].encode('utf-8')
       else:
         event_data.APPName = 'None'
 
-      if self._GetSize(ret[self.COLUMN2PRINT["CreateDT"]]) == 0:
+      if self._GetSize(ret[self._COLUMN2PRINT["CreateDT"]]) == 0:
         date_time = dfdatetime_semantic.SemanticTime('Not set')
         desc = definitions.TIME_DESCRIPTION_NOT_A_TIME
       else:
-        createDT = self._GetSize(ret[self.COLUMN2PRINT["CreateDT"]])
+        createDT = self._GetSize(ret[self._COLUMN2PRINT["CreateDT"]])
         date_time = dfdatetime_filetime.Filetime(timestamp=int(createDT))
         desc = definitions.TIME_DESCRIPTION_CREATION
 
@@ -213,5 +197,4 @@ class WinSearchESEDBPlugin(interface.ESEDBPlugin):
       parser_mediator.ProduceEventWithEventData(event, event_data)
 
 
-#manager.ParsersManager.RegisterParser(WinSearchDBParser)
 esedb.ESEDBParser.RegisterPlugin(WinSearchESEDBPlugin)
