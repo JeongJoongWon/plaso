@@ -194,8 +194,11 @@ class ESEDBPlugin(plugins.BasePlugin):
       return None
 
     if column_type == pyesedb.column_types.BOOLEAN:
+      if long_value:
+        return long_value.get_data_flags(value_entry)
+      return record.get_value_data_flags(value_entry)
       # TODO: implement
-      raise ValueError('Boolean value support not implemented yet.')
+      #raise ValueError('Boolean value support not implemented yet.')
 
     if column_type in self.INTEGER_COLUMN_TYPES:
       if long_value:
