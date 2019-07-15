@@ -562,7 +562,7 @@ class CARPEPSORTTool(
 
     if self._quiet_mode:
       return
-
+    '''
     self._output_writer.Write('Processing completed.\n')
 
     if analysis_counter:
@@ -578,3 +578,4 @@ class CARPEPSORTTool(
     storage_reader = storage_factory.StorageFactory.CreateStorageReaderForFile(
         self._storage_file_path)
     self._PrintAnalysisReportsDetails(storage_reader)
+    '''
