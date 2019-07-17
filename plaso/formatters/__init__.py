@@ -124,4 +124,5 @@ from plaso.formatters import zeitgeist
 from plaso.formatters import zsh_extended_history
 from plaso.formatters import wintimeline
 from plaso.formatters import winiconcache
+from plaso.formatters import winiconcache_name
 from plaso.formatters import winsearchdb
