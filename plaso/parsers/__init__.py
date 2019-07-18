@@ -69,6 +69,7 @@ from plaso.parsers import zsh_extended_history
 
 from plaso.parsers import winiconcache
 from plaso.parsers import winiconcache_name
+from plaso.parsers import winsuperfetch
 
 # Register plugins.
 from plaso.parsers import bencode_plugins

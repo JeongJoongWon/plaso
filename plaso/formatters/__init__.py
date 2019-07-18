@@ -126,3 +126,4 @@ from plaso.formatters import wintimeline
 from plaso.formatters import winiconcache
 from plaso.formatters import winiconcache_name
 from plaso.formatters import winsearchdb
+from plaso.formatters import winsuperfetch
