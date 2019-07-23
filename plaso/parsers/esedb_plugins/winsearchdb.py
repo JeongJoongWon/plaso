@@ -10,13 +10,9 @@ from plaso.containers import events
 from plaso.containers import time_events
 from plaso.lib import definitions
 
-import sys
 from datetime import datetime as dt
 from plaso.parsers import esedb
 from plaso.parsers.esedb_plugins import interface
-
-reload(sys)
-sys.setdefaultencoding('utf8')
 
 class WinSearchDBExecutionEventData(events.EventData):
   """Windows WinSearchDB event data.
