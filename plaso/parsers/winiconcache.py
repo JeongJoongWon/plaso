@@ -18,8 +18,10 @@ import sys
 import hashlib
 import base64
 
+'''
 reload(sys)
 sys.setdefaultencoding('utf8')
+'''
 
 class WinIconcacheExecutionEventData(events.EventData):
   """Windows Iconcache event data.
@@ -62,34 +64,34 @@ class WinIconcacheParser(interface.FileObjectParser):
     format_specification.AddNewSignature(b'CMMM', offset=0)
     return format_specification
 
-  def OpenBF(self, file_name):
-    fn = file_name
-    fh = open(fn, 'rb')
-    return fh
-
-  def ReadB(self, fh, offset):
-    ss = fh.read(offset)
-    return ss
-
   def GetEntryOff(self, bData):
     off = 0
     for b in bData:
-      off += int(ord(b))
+      if b != b'\x00':
+        off += self.hex2int(b)
     return off
+
+  def hex2int(self, b):
+    cnt = 0
+    for i in range(0x00, 0xff):
+      if chr(i) == b:
+        break
+      cnt += 1
+    return (cnt)
 
   def GetSize(self, bData):
     size = 0
     idx = 0
     for b in bData:
-      if len(hex(ord(b))) == 4:
-        tens = self.HEX_MAP[hex(ord(b))[3]]
+      if len(hex(self.hex2int(b))) == 4:
+        tens = self.HEX_MAP[hex(self.hex2int(b))[3]]
         size += tens*(16**idx)
         idx += 1
-        units = self.HEX_MAP[hex(ord(b))[2]]
+        units = self.HEX_MAP[hex(self.hex2int(b))[2]]
         size += units*(16**idx)
         idx += 1
       else:
-        units = self.HEX_MAP[hex(ord(b))[2]]
+        units = self.HEX_MAP[hex(self.hex2int(b))[2]]
         size += units*(16**idx)
         idx += 1
     return size
@@ -97,8 +99,8 @@ class WinIconcacheParser(interface.FileObjectParser):
   def GetName(self, bData):
     name = ''
     for b in bData:
-      if ord(b) != 0:
-        name += chr(ord(b))
+      if b != b'\x00':
+        name += str(self.hex2int(b))
     return name
 
   def GetSHA1(self, bData):
@@ -109,7 +111,7 @@ class WinIconcacheParser(interface.FileObjectParser):
   def GetIconFormat(self, bData):
     fmat = ''
     for b in bData:
-      fmat += chr(ord(b))
+      fmat += str(self.hex2int(b))
     if fmat == "BM":
       return "BMP"
     else:
@@ -117,7 +119,7 @@ class WinIconcacheParser(interface.FileObjectParser):
 
   def CheckEndData(self, bData):
     for b in bData:
-      if ord(b) != 0:
+      if b != b'\x00':
         return True
     return False
 
@@ -161,9 +163,8 @@ class WinIconcacheParser(interface.FileObjectParser):
       eData += file_object.read(eSize-40)
       iResX = self.GetSize(eData[20:24])
       iResY = self.GetSize(eData[24:28])
-      iName = str(self.GetName(eData[48:80]))
+      iName = self.GetName(eData[48:80])
       iFmat = self.GetIconFormat(eData[82:84])
-      iNm = str(iName.decode('utf-8'))
       iData = eData[82:]
 
       headBuf = bytes(iData[:2])
@@ -171,11 +172,11 @@ class WinIconcacheParser(interface.FileObjectParser):
         iData = b'BM' + eData[82:]
 
       fName = 'winiconcache\\' + iName + '_' + self.GetSHA1(eData[82:])[:4] + '.jpg'
-      f=open(fName, 'w')
+      f=open(fName, 'wb')
       f.write(iData)
       f.close()
 
-      icon_data = "iNo: " + str(bIdx) + " Name: " + iNm + " ResXY: " + (str(iResX) + "x" + str(iResY)) + " ImgType: " + iFmat + " Data: " + str(base64.b64encode(iData)) + " SHA1: " + self.GetSHA1(eData[82:])
+      icon_data = "iNo: " + str(bIdx) + " Name: " + iName + " ResXY: " + (str(iResX) + "x" + str(iResY)) + " ImgType: " + iFmat + " Data: " + str(base64.b64encode(iData)) + " SHA1: " + self.GetSHA1(eData[82:])
       icon_ret_split.append(icon_data)
       bIdx += 1
 
