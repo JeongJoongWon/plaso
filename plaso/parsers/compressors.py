@@ -139,20 +139,27 @@ if dll is not None:
     def _prep(f, args):
         f.restype, f.errcheck, f.argtypes = c_int, _errchk, args
         return f
+    def hex2int(b):
+        cnt = 0
+        for i in range(0x00, 0xff):
+            if chr(i) == b:
+                break
+            cnt += 1
+        return (cnt)
     def GetSize(bData):
         size = 0
         idx = 0
         hexs = ''
         for b in bData:
-            if len(hex(ord(b))) == 4:
-                tens = HEX_MAP[hex(ord(b))[3]]
+            if len(hex(hex2int(b))) == 4:
+                tens = HEX_MAP[hex(hex2int(b))[3]]
                 size += tens * (16 ** idx)
                 idx += 1
-                units = HEX_MAP[hex(ord(b))[2]]
+                units = HEX_MAP[hex(hex2int(b))[2]]
                 size += units * (16 ** idx)
                 idx += 1
             else:
-                units = HEX_MAP[hex(ord(b))[2]]
+                units = HEX_MAP[hex(hex2int(b))[2]]
                 size += units * (16 ** idx)
                 idx += 2
         return size
@@ -163,7 +170,7 @@ if dll is not None:
     def chkFile(size, bData):
         if size > len(bData): return False
         for i in range(1, size*2, 2):
-            if ord(bData[i]) != 0:
+            if bData[i] != 0:
                 return False
         return True
     class OpenSrc(StreamableCompressor):

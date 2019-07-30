@@ -18,8 +18,10 @@ import sys
 import datetime as dt
 import compressors as cm
 
+#'''
 reload(sys)
 sys.setdefaultencoding('utf8')
+#'''
 
 class WinSuperfetchExecutionEventData(events.EventData):
   """Windows Superfetch event data.
@@ -62,7 +64,6 @@ class WinSuperfetchParser(interface.FileObjectParser):
     return epoch * 10000000
 
   def PrintStr2Timestamp(self, str):
-    date =''
     if len(str) > 19:
       date = str[0:10] + ' ' + str[-8:-1]
       timestamp = time.mktime(dt.datetime.strptime(date, '%Y-%m-%d %H:%M:%S').timetuple())
@@ -70,90 +71,90 @@ class WinSuperfetchParser(interface.FileObjectParser):
     else:
       return 0
 
-  def ParseRecords(self):
+  def hex2int(self, b):
+    cnt = 0
+    for i in range(0x00, 0xff):
+      if chr(i) == b:
+        break
+      cnt += 1
+    return (cnt)
+
+  def GetSizeInt(self, nData):
+    size = 0
+    idx = 0
+    for n in nData:
+      if len(hex(n)) == 4:
+        tens = self.HEX_MAP[hex(n)[3]]
+        size += tens * (16**idx)
+        idx += 1
+        units = self.HEX_MAP[hex(n)[2]]
+        size += units * (16**idx)
+        idx += 1
+      else:
+        units = self.HEX_MAP[hex(n)[2]]
+        size += units * (16**idx)
+        idx += 2
+    return size
+
+  def ParseRecords(self, file_object):
     superfetch_info = {}
     file_info = [] 
 
-    fn = 'tmp_ijb_super.db'
-    out_file = 'tmp_ijb.db'
-    input_data = ''
-    
-    fd = open(fn, mode='rb')
-    input_data = fd.read()
-    fd.close()
-    
+    file_object.seek(0)
+    input_data = file_object.read()
+
     len_unCompress = cm.GetSize(input_data[4:8])
     len_Compress = cm.GetSize(input_data[8:12])
     compress_data = input_data[12:len_Compress+12]
     
     out_buffer = bytearray(len_unCompress)
     ret = cm.XpressHuffman['OpenSrc'].Decompress(compress_data, out_buffer)
-    
-    ofn = open(out_file, 'wb')
-    ofn.write(out_buffer)
-    ofn.close()
-    oifn = open(out_file, 'rb')
-    out_buffer = oifn.read()
-    
+
     out_buffer = out_buffer[244:]
     fName = ''
     for b in out_buffer:
-      if (ord(b)) == 0: break
-      fName += chr(ord(b))
-    
+      if 0 == b:
+        break
+      fName += chr(b)
+
     out_buffer = out_buffer[60:]
-    timestamp = cm.ldap2unix(cm.GetSize(out_buffer[0:8]))
-    volId = '0000' + str(hex(ord(out_buffer[11]))[2:]) + str(hex(ord(out_buffer[10]))[2:]) + '-0000' + str(hex(ord(out_buffer[9]))[2:]) + str(hex(ord(out_buffer[8]))[2:]) 
-    dNmLen = cm.GetSize(out_buffer[20:22])
-    
+    timestamp = cm.ldap2unix(self.GetSizeInt(out_buffer[0:8]))
+    volId = '0000%X%X-0000%X%X' % (out_buffer[11], out_buffer[10], out_buffer[9], out_buffer[8])
+    dNmLen = self.GetSizeInt(out_buffer[20:22])
+
     out_buffer = out_buffer[32:]
     volName = ''
     for i in range(0, dNmLen*2):
-      if ord(out_buffer[i]) != 0:
-        volName += chr(ord(out_buffer[i]))
+      if out_buffer[i] != 0:
+        volName += chr(out_buffer[i])
 
     superfetch_info['Name']=fName
     superfetch_info['Volumn Name'] = volName
     superfetch_info['Volumne ID'] = volId
     superfetch_info['Time'] = timestamp
-    
+
     out_buffer = out_buffer[dNmLen*2:]
     bufSize = len(out_buffer)
     idx = 0
     cnt = 0
     while idx < bufSize:
-      if ord(out_buffer[idx]) == 92 and ord(out_buffer[idx+1]) == 0 and ord(out_buffer[idx+2]) != 0 and ord(out_buffer[idx+3]) == 0: 
-        flen = cm.GetSize(out_buffer[idx-24:idx-20])/4
+      if out_buffer[idx] == 92 and out_buffer[idx+1] == 0 and out_buffer[idx+2] != 0 and out_buffer[idx+3] == 0:
+        flen = self.GetSizeInt(out_buffer[idx-24:idx-20])/4
         if cm.chkFile(flen, out_buffer[idx:]) == False: 
           idx += 1
           continue
             
         fName=''
         for i in range(0, flen*2):
-          if ord(out_buffer[i+idx]) != 0:
-            fName += chr(ord(out_buffer[i+idx]))
+          if out_buffer[i+idx] != 0:
+            fName += chr(out_buffer[i+idx])
         file_info.append(fName)
         idx += flen*2
         cnt += 1
       else:
         idx += 1
-    
-    oifn.close()
-
-    os.remove(out_file)
-    os.remove('tmp_ijb_super.db')
 
     return superfetch_info, file_info
-
-  def saveFile(self, file_object):
-    #file_len = file_object.get_size()
-    current_offset = file_object.get_offset()
-    file_object.seek(0)
-    file_data = file_object.read()
-    f=open('tmp_ijb_super.db', 'wb')
-    f.write(file_data)
-    f.close()
-    file_object.seek(current_offset)
 
   def ParseFileObject(self, parser_mediator, file_object):
     """Parses a Windows Superfetch file-like object.
@@ -165,8 +166,7 @@ class WinSuperfetchParser(interface.FileObjectParser):
     """
     date_time = dfdatetime_filetime.Filetime(timestamp=int(time.time()))
 
-    self.saveFile(file_object)
-    superfet_info, file_info = self.ParseRecords()
+    superfet_info, file_info = self.ParseRecords(file_object)
     super_ret =''
 
     for key in superfet_info.keys():
