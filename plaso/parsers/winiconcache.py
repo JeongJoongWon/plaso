@@ -14,6 +14,7 @@ from plaso.parsers import manager
 
 import os
 import sys
+import platform as pl
 
 import hashlib
 import base64
@@ -171,7 +172,11 @@ class WinIconcacheParser(interface.FileObjectParser):
       if headBuf != b'BM':
         iData = b'BM' + eData[82:]
 
-      fName = 'winiconcache\\' + iName + '_' + self.GetSHA1(eData[82:])[:4] + '.jpg'
+      if pl.system() == 'Linux': 
+        fName = 'winiconcache//' + iName + '_' + self.GetSHA1(eData[82:])[:4] + '.jpg'
+      else:
+        fName = 'winiconcache\\' + iName + '_' + self.GetSHA1(eData[82:])[:4] + '.jpg'
+
       f=open(fName, 'wb')
       f.write(iData)
       f.close()

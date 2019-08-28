@@ -10,6 +10,7 @@ from plaso.parsers import interface
 from plaso.parsers import manager
 
 import os
+import platform as pl
 
 from dfdatetime import semantic_time as dfdatetime_semantic_time
 from plaso.containers import time_events
@@ -321,7 +322,10 @@ class OLECFParser(interface.FileObjectParser):
           event_data.thumbs_info = ret
 
           self.createFolder('winthumbnail')
-          fName = 'winthumbnail\\' + str(i) + '_' + self.GetSHA1(ret)[:4] +  '.jpg'
+          if pl.system() == 'Linux':
+            fName = 'winthumbnail//' + str(i) + '_' + self.GetSHA1(ret)[:4] +  '.jpg'
+          else:
+            fName = 'winthumbnail\\' + str(i) + '_' + self.GetSHA1(ret)[:4] +  '.jpg'
           f=open(fName, 'wb')
           f.write(b64.b64decode(ret))
           f.close()
