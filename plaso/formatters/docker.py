@@ -23,7 +23,7 @@ class DockerContainerLogEventFormatter(interface.ConditionalEventFormatter):
 
   DATA_TYPE = 'docker:json:container:log'
 
-  FORMAT_STRING_SEPARATOR = ', '
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = (
       'Text: {log_line}',
@@ -40,7 +40,7 @@ class DockerLayerEventFormatter(interface.ConditionalEventFormatter):
 
   DATA_TYPE = 'docker:json:layer'
 
-  FORMAT_STRING_SEPARATOR = ', '
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = (
       'Command: {command}',
@@ -56,7 +56,7 @@ class DockerContainerEventFormatter(interface.ConditionalEventFormatter):
 
   DATA_TYPE = 'docker:json:container'
 
-  FORMAT_STRING_SEPARATOR = ', '
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       'Action: {action}',

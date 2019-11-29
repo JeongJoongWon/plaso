@@ -12,7 +12,7 @@ class PlistFormatter(interface.ConditionalEventFormatter):
 
   DATA_TYPE = 'plist:key'
 
-  FORMAT_STRING_SEPARATOR = ''
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       '{root}/',

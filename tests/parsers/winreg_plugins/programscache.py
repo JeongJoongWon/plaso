@@ -55,15 +55,14 @@ class ExplorerProgramCacheWindowsRegistryPluginTest(
     # The ProgramsCache entry shell item event.
     event = events[0]
 
-    expected_parser = 'explorer_programscache/shell_items'
-    self.assertEqual(event.parser, expected_parser)
-
     self.CheckTimestamp(event.timestamp, '2009-08-04 15:12:24.000000')
     self.assertEqual(
         event.timestamp_desc, definitions.TIME_DESCRIPTION_CREATION)
 
-    expected_data_type = 'windows:shell_item:file_entry'
-    self.assertEqual(event.data_type, expected_data_type)
+    event_data = self._GetEventDataOfEvent(storage_writer, event)
+
+    self.assertEqual(event_data.parser, 'explorer_programscache/shell_items')
+    self.assertEqual(event_data.data_type, 'windows:shell_item:file_entry')
 
     expected_message = (
         'Name: Programs '
@@ -76,18 +75,21 @@ class ExplorerProgramCacheWindowsRegistryPluginTest(
         'Origin: HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\'
         'CurrentVe...')
 
-    self._TestGetMessageStrings(event, expected_message, expected_short_message)
+    self._TestGetMessageStrings(
+        event_data, expected_message, expected_short_message)
 
     # The ProgramsCache list event.
     event = events[75]
-
-    self.assertEqual(event.parser, 'explorer_programscache')
 
     self.CheckTimestamp(event.timestamp, '2009-08-04 15:22:18.419625')
     self.assertEqual(
         event.timestamp_desc, definitions.TIME_DESCRIPTION_WRITTEN)
 
-    self.assertEqual(event.data_type, 'windows:registry:explorer:programcache')
+    event_data = self._GetEventDataOfEvent(storage_writer, event)
+
+    self.assertEqual(event_data.parser, 'explorer_programscache')
+    self.assertEqual(
+        event_data.data_type, 'windows:registry:explorer:programcache')
 
     expected_message = (
         'Key: {0:s} '
@@ -115,19 +117,20 @@ class ExplorerProgramCacheWindowsRegistryPluginTest(
         '19: Internet Explorer (No Add-ons).lnk]').format(key_path)
     expected_short_message = '{0:s}...'.format(expected_message[:77])
 
-    self._TestGetMessageStrings(event, expected_message, expected_short_message)
+    self._TestGetMessageStrings(
+        event_data, expected_message, expected_short_message)
 
     # The Windows Registry key event.
     event = events[76]
-
-    expected_parser = 'explorer_programscache'
-    self.assertEqual(event.parser, expected_parser)
 
     self.CheckTimestamp(event.timestamp, '2009-08-04 15:22:18.419625')
     self.assertEqual(
         event.timestamp_desc, definitions.TIME_DESCRIPTION_WRITTEN)
 
-    self.assertEqual(event.data_type, 'windows:registry:key_value')
+    event_data = self._GetEventDataOfEvent(storage_writer, event)
+
+    self.assertEqual(event_data.parser, 'explorer_programscache')
+    self.assertEqual(event_data.data_type, 'windows:registry:key_value')
 
     expected_message = (
         '[{0:s}] '
@@ -138,7 +141,8 @@ class ExplorerProgramCacheWindowsRegistryPluginTest(
         'StartMenu_Start_Time: [REG_BINARY] (8 bytes)').format(key_path)
     expected_short_message = '{0:s}...'.format(expected_message[:77])
 
-    self._TestGetMessageStrings(event, expected_message, expected_short_message)
+    self._TestGetMessageStrings(
+        event_data, expected_message, expected_short_message)
 
   def testProcessStartPage2(self):
     """Tests the Process function on a StartPage2 key."""
@@ -161,15 +165,14 @@ class ExplorerProgramCacheWindowsRegistryPluginTest(
 
     event = events[0]
 
-    expected_parser = 'explorer_programscache/shell_items'
-    self.assertEqual(event.parser, expected_parser)
-
     self.CheckTimestamp(event.timestamp, '2010-11-10 07:50:38.000000')
     self.assertEqual(
         event.timestamp_desc, definitions.TIME_DESCRIPTION_CREATION)
 
-    expected_data_type = 'windows:shell_item:file_entry'
-    self.assertEqual(event.data_type, expected_data_type)
+    event_data = self._GetEventDataOfEvent(storage_writer, event)
+
+    self.assertEqual(event_data.parser, 'explorer_programscache/shell_items')
+    self.assertEqual(event_data.data_type, 'windows:shell_item:file_entry')
 
 
 if __name__ == '__main__':

@@ -65,7 +65,7 @@ class NetworkDrivesPlugin(interface.WindowsRegistryPlugin):
 
       event_data = NetworkDriveEventData()
       event_data.drive_letter = drive_letter
-      event_data.key_path = registry_key.path
+      event_data.key_path = (registry_key.path).replace("\\", "/")
       event_data.server_name = server_name
       event_data.share_name = share_name
 

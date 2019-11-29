@@ -77,7 +77,7 @@ class USBStorPlugin(interface.WindowsRegistryPlugin):
             'Expected 4 &-separated values in: {0:s}'.format(subkey_name))
 
       event_data = USBStorEventData()
-      event_data.key_path = registry_key.path
+      event_data.key_path = (registry_key.path).replace("\\", "/")
       event_data.subkey_name = subkey_name
 
       if number_of_name_values >= 1:

@@ -79,7 +79,7 @@ class BootVerificationPlugin(interface.WindowsRegistryPlugin):
 
     if image_path:
       event_data = WindowsBootVerificationEventData()
-      event_data.key_path = registry_key.path
+      event_data.key_path = (registry_key.path).replace("\\", "/")
       event_data.image_path = image_path
 
       event = time_events.DateTimeValuesEvent(
@@ -90,7 +90,7 @@ class BootVerificationPlugin(interface.WindowsRegistryPlugin):
         registry_key, names_to_skip=['ImagePath'])
     if values_dict:
       event_data = windows_events.WindowsRegistryEventData()
-      event_data.key_path = registry_key.path
+      event_data.key_path = (registry_key.path).replace("\\", "/")
       event_data.values = ' '.join([
           '{0:s}: {1!s}'.format(name, value)
           for name, value in sorted(values_dict.items())]) or None
@@ -145,7 +145,7 @@ class BootExecutePlugin(interface.WindowsRegistryPlugin):
 
     if boot_execute:
       event_data = WindowsBootExecuteEventData()
-      event_data.key_path = registry_key.path
+      event_data.key_path = (registry_key.path).replace("\\", "/")
       event_data.value = boot_execute
 
       event = time_events.DateTimeValuesEvent(
@@ -155,7 +155,7 @@ class BootExecutePlugin(interface.WindowsRegistryPlugin):
 
     if values_dict:
       event_data = windows_events.WindowsRegistryEventData()
-      event_data.key_path = registry_key.path
+      event_data.key_path = (registry_key.path).replace("\\", "/")
       event_data.values = ' '.join([
           '{0:s}: {1!s}'.format(name, value)
           for name, value in sorted(values_dict.items())])

@@ -15,7 +15,7 @@ class TransmissionEventFormatter(interface.ConditionalEventFormatter):
   SOURCE_LONG = 'Transmission Active Torrents'
   SOURCE_SHORT = 'TORRENT'
 
-  FORMAT_STRING_SEPARATOR = '; '
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       'Saved to {destination}',
@@ -30,7 +30,7 @@ class UTorrentEventFormatter(interface.ConditionalEventFormatter):
   SOURCE_LONG = 'uTorrent Active Torrents'
   SOURCE_SHORT = 'TORRENT'
 
-  FORMAT_STRING_SEPARATOR = '; '
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       'Torrent {caption}',

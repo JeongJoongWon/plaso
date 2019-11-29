@@ -107,7 +107,7 @@ class ServicesPlugin(interface.WindowsRegistryPlugin):
     # Create a specific service event, so that we can recognize and expand
     # certain values when we're outputting the event.
     event_data = WindowsRegistryServiceEventData()
-    event_data.key_path = registry_key.path
+    event_data.key_path = (registry_key.path).replace("\\", "/")
     event_data.name = registry_key.name
     event_data.service_type = service_type
     event_data.service_dll = self._GetServiceDll(registry_key)

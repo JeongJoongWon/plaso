@@ -217,7 +217,7 @@ class ConditionalEventFormatter(EventFormatter):
   FORMAT_STRING_SHORT_PIECES = ['']
 
   # The separator used to join the string pieces.
-  FORMAT_STRING_SEPARATOR = ' '
+  FORMAT_STRING_SEPARATOR = '|`'
 
   def __init__(self):
     """Initializes the conditional formatter.

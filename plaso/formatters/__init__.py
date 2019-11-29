@@ -10,8 +10,10 @@ from plaso.formatters import android_webviewcache
 from plaso.formatters import apache_access
 from plaso.formatters import appcompatcache
 from plaso.formatters import appusage
+from plaso.formatters import apt_history
 from plaso.formatters import asl
 from plaso.formatters import bagmru
+from plaso.formatters import bam
 from plaso.formatters import bash_history
 from plaso.formatters import bencode_parser
 from plaso.formatters import bsm
@@ -26,7 +28,12 @@ from plaso.formatters import cron
 from plaso.formatters import cups_ipp
 from plaso.formatters import docker
 from plaso.formatters import dpkg
-from plaso.formatters import file_history
+from plaso.formatters import externalstoragelist
+from plaso.formatters import filehistory_filelist
+from plaso.formatters import filehistory_global
+from plaso.formatters import filehistory_library
+from plaso.formatters import filehistory_config
+from plaso.formatters import filehistory_restorelog
 from plaso.formatters import file_system
 from plaso.formatters import firefox
 from plaso.formatters import firefox_cache
@@ -81,6 +88,7 @@ from plaso.formatters import santa
 from plaso.formatters import sccm
 from plaso.formatters import selinux
 from plaso.formatters import services
+from plaso.formatters import setupapi
 from plaso.formatters import shell_items
 from plaso.formatters import shutdown
 from plaso.formatters import skydrivelog
@@ -105,6 +113,7 @@ from plaso.formatters import usbstor
 from plaso.formatters import userassist
 from plaso.formatters import utmp
 from plaso.formatters import utmpx
+from plaso.formatters import vsftpd
 from plaso.formatters import windows
 from plaso.formatters import windows_timeline
 from plaso.formatters import windows_version
@@ -122,3 +131,4 @@ from plaso.formatters import xchatlog
 from plaso.formatters import xchatscrollback
 from plaso.formatters import zeitgeist
 from plaso.formatters import zsh_extended_history
+

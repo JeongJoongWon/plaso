@@ -69,7 +69,7 @@ class WinRegTimezonePlugin(interface.WindowsRegistryPlugin):
 
     event_data = WindowsTimezoneSettingsEventData()
     event_data.configuration = ' '.join(sorted(configuration)) or None
-    event_data.key_path = registry_key.path
+    event_data.key_path = (registry_key.path).replace("\\", "/")
 
     event = time_events.DateTimeValuesEvent(
         registry_key.last_written_time, definitions.TIME_DESCRIPTION_WRITTEN)

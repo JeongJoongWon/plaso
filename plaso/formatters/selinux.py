@@ -12,7 +12,7 @@ class SELinuxFormatter(interface.ConditionalEventFormatter):
 
   DATA_TYPE = 'selinux:line'
 
-  FORMAT_STRING_SEPARATOR = ''
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       '[',

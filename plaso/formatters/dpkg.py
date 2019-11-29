@@ -12,7 +12,7 @@ class DpkgFormatter(interface.ConditionalEventFormatter):
 
   DATA_TYPE = 'dpkg:line'
 
-  FORMAT_STRING_SEPARATOR = ''
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       '{body}']

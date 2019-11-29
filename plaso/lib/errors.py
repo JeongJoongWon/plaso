@@ -125,3 +125,6 @@ class WrongQueueType(Error):
 
   For example, attempting to Pop from a Push-only queue.
   """
+
+class InvalidQueryType(Error):
+  """Error indicating an invalid query was specified."""

@@ -12,7 +12,7 @@ class XChatScrollbackFormatter(interface.ConditionalEventFormatter):
 
   DATA_TYPE = 'xchat:scrollback:line'
 
-  FORMAT_STRING_SEPARATOR = ''
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       '[',

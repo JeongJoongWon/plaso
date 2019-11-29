@@ -34,7 +34,7 @@ from plaso.cli.helpers import windows_services_analysis
 from plaso.cli.helpers import xlsx_output
 from plaso.cli.helpers import yara_rules
 from plaso.cli.helpers import workers
-from plaso.cli.helpers import mariasql_4n6time_output #test_to_add_jschoi
+from plaso.cli.helpers import mariasql_4n6time_output
 
 # These modules do not register CLI helpers, but contain super classes used by
 # CLI helpers in other modules.

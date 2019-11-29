@@ -169,7 +169,7 @@ class ExplorerProgramsCacheWindowsRegistryPlugin(
     event_data.entries = ' '.join([
         '{0:d}: {1:s}'.format(index, link_target)
         for index, link_target in enumerate(link_targets)]) or None
-    event_data.key_path = registry_key.path
+    event_data.key_path = (registry_key.path).replace("\\", "/")
     event_data.known_folder_identifier = known_folder_identifier
     event_data.value_name = registry_value.name
 
@@ -204,7 +204,7 @@ class ExplorerProgramsCacheWindowsRegistryPlugin(
         del values_dict[name]
 
     event_data = windows_events.WindowsRegistryEventData()
-    event_data.key_path = registry_key.path
+    event_data.key_path = (registry_key.path).replace("\\", "/")
     event_data.values = ' '.join([
         '{0:s}: {1!s}'.format(name, value)
         for name, value in sorted(values_dict.items())]) or None

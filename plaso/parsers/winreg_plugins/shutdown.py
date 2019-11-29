@@ -102,7 +102,7 @@ class ShutdownWindowsRegistryPlugin(
       date_time = dfdatetime_semantic_time.SemanticTime('Not set')
 
     event_data = ShutdownWindowsRegistryEventData()
-    event_data.key_path = registry_key.path
+    event_data.key_path = (registry_key.path).replace("\\", "/")
     event_data.offset = shutdown_value.offset
     event_data.value_name = shutdown_value.name
 

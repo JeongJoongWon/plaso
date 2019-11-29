@@ -37,6 +37,9 @@ class WindowsRegistryInstallationEventData(events.EventData):
     self.product_name = None
     self.service_pack = None
     self.version = None
+    self.path = None
+    self.install_type = None
+    self.product_id = None
 
 
 class WindowsVersionPlugin(interface.WindowsRegistryPlugin):
@@ -82,25 +85,37 @@ class WindowsVersionPlugin(interface.WindowsRegistryPlugin):
       event_data = WindowsRegistryInstallationEventData()
       event_data.key_path = registry_key.path
 
-      registry_value = registry_key.GetValueByName('CurrentBuildNumber')
+      registry_value = registry_key.GetValueByName('SystemRoot')
       if registry_value:
-        event_data.build_number = registry_value.GetDataAsObject()
+        event_data.path = registry_value.GetDataAsObject()
 
-      registry_value = registry_key.GetValueByName('RegisteredOwner')
+      registry_value = registry_key.GetValueByName('CurrentVersion')
       if registry_value:
-        event_data.owner = registry_value.GetDataAsObject()
+        event_data.version = registry_value.GetDataAsObject()
+
+      registry_value = registry_key.GetValueByName('InstallDate')
+      if registry_value:
+        event_data.date = registry_value.GetDataAsObject()
+
+      registry_value = registry_key.GetValueByName('InstallTime')
+      if registry_value:
+        event_data.time = registry_value.GetDataAsObject()  
 
       registry_value = registry_key.GetValueByName('ProductName')
       if registry_value:
         event_data.product_name = registry_value.GetDataAsObject()
 
-      registry_value = registry_key.GetValueByName('CSDVersion')
+      registry_value = registry_key.GetValueByName('RegisteredOwner')
       if registry_value:
-        event_data.service_pack = registry_value.GetDataAsObject()
-
-      registry_value = registry_key.GetValueByName('CurrentVersion')
+        event_data.owner = registry_value.GetDataAsObject()
+      
+      registry_value = registry_key.GetValueByName('BuildLabEx')
       if registry_value:
-        event_data.version = registry_value.GetDataAsObject()
+        event_data.buildLab = registry_value.GetDataAsObject()
+      
+      registry_value = registry_key.GetValueByName('ProductId')
+      if registry_value:
+        event_data.product_id = registry_value.GetDataAsObject()
 
       date_time = dfdatetime_posix_time.PosixTime(timestamp=installation_time)
       event = time_events.DateTimeValuesEvent(

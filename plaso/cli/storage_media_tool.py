@@ -234,6 +234,7 @@ class StorageMediaTool(tools.CLITool):
     # TODO: refactor self._partitions to use scan options.
     if self._partitions:
       partitions = range(1, volume_system.number_of_volumes + 1)
+      
       selected_volume_identifiers = self._NormalizedVolumeIdentifiers(
           volume_system, partitions, prefix='p')
 
@@ -242,7 +243,7 @@ class StorageMediaTool(tools.CLITool):
 
     if len(volume_identifiers) == 1:
       return volume_identifiers
-    
+
     return self._NormalizedVolumeIdentifiers(
         volume_system, volume_identifiers, prefix='p')
 
@@ -1112,6 +1113,23 @@ class StorageMediaTool(tools.CLITool):
             '"all".'))
 
   def ScanSource(self, source_path):
+    """Scans the source path for volume and file systems.
+
+    This function sets the internal source path specification and source
+    type values.
+
+    Args:
+      source_path (str): path to the source.
+
+    Returns:
+      dfvfs.SourceScannerContext: source scanner context.
+
+    Raises:
+      SourceScannerError: if the format of or within the source is
+          not supported.
+    """
+    # Symbolic links are resolved here and not earlier to preserve the user
+    # specified source path in storage and reporting.
     if os.path.islink(source_path):
       source_path = os.path.realpath(source_path)
 

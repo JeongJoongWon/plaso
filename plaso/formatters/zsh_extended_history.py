@@ -12,7 +12,7 @@ class ZshExtendedHistoryEventFormatter(interface.ConditionalEventFormatter):
 
   DATA_TYPE = 'shell:zsh:history'
 
-  FORMAT_STRING_SEPARATOR = ' '
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       '{command}',

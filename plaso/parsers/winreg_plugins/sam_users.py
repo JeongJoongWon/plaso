@@ -173,7 +173,7 @@ class SAMUsersWindowsRegistryPlugin(
       event_data.account_rid = f_value.rid
       event_data.comments = comments
       event_data.fullname = fullname
-      event_data.key_path = registry_key.path
+      event_data.key_path = (registry_key.path).replace("\\", "/")
       event_data.login_count = f_value.number_of_logons
       event_data.username = username
 

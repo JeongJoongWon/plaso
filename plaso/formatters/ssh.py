@@ -12,7 +12,7 @@ class SSHLoginEventFormatter(interface.ConditionalEventFormatter):
 
   DATA_TYPE = 'syslog:ssh:login'
 
-  FORMAT_STRING_SEPARATOR = ''
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       'Successful login of user: {username}',
@@ -32,7 +32,7 @@ class SSHFailedConnectionEventFormatter(interface.ConditionalEventFormatter):
 
   DATA_TYPE = 'syslog:ssh:failed_connection'
 
-  FORMAT_STRING_SEPARATOR = ''
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       'Unsuccessful connection of user: {username}',
@@ -52,7 +52,7 @@ class SSHOpenedConnectionEventFormatter(interface.ConditionalEventFormatter):
 
   DATA_TYPE = 'syslog:ssh:opened_connection'
 
-  FORMAT_STRING_SEPARATOR = ''
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       'Connection opened {address}:',

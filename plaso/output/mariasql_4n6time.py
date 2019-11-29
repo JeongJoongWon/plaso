@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 --
 """Defines the output module for the SQLite database used by 4n6time."""
 
 from __future__ import unicode_literals
@@ -13,8 +13,6 @@ except ImportError:
 from plaso.output import logger
 from plaso.output import manager
 from plaso.output import shared_4n6time
-
-import pdb
 
 class MariaSQL4n6TimeOutputMoudle(shared_4n6time.Shared4n6TimeOutputModule):
     """Output module class to save the data in a Maria database
@@ -155,10 +153,10 @@ class MariaSQL4n6TimeOutputMoudle(shared_4n6time.Shared4n6TimeOutputModule):
 
         try:
             self._connection = pymysql.connect(
-                host=self._host, port=self._port, user=self._user, password=self._password)
+                host = self._host, port = self._port, user = self._user, password = self._password)
             self._connection.set_charset('utf8mb4')
             self._cursor = self._connection.cursor()
-            
+
             self._cursor.execute(
                 'CREATE DATABASE IF NOT EXISTS {0:s}'.format(self._dbname))
             self._cursor.execute('USE {0:s}'.format(self._dbname))
@@ -305,7 +303,6 @@ class MariaSQL4n6TimeOutputMoudle(shared_4n6time.Shared4n6TimeOutputModule):
             '%(evd_id)s, %(par_id)s)')
 
         try:
-            pdb.set_trace()
             self._cursor.execute(_INSERT_QUERY, row)
         except pymysql.Error as exception:
             logger.warning(

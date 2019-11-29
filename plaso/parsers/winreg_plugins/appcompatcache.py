@@ -667,7 +667,7 @@ class AppCompatCacheWindowsRegistryPlugin(
 
       event_data = AppCompatCacheEventData()
       event_data.entry_index = cached_entry_index + 1
-      event_data.key_path = registry_key.path
+      event_data.key_path = (registry_key.path).replace("\\", "/")
       event_data.offset = cached_entry_offset
       event_data.path = cached_entry_object.path
 

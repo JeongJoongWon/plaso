@@ -12,7 +12,7 @@ class SCCMEventFormatter(interface.ConditionalEventFormatter):
 
   DATA_TYPE = 'software_management:sccm:log'
 
-  FORMAT_STRING_SEPARATOR = ' '
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       '{component}',

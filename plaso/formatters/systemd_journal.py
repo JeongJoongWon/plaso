@@ -17,7 +17,7 @@ class SystemdJournalEventFormatter(interface.ConditionalEventFormatter):
   # Unfortunately, journal files that have not been closed cleanly may contain
   # entries that have no _MACHINE_ID field.
 
-  FORMAT_STRING_SEPARATOR = ''
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       '{hostname} ',

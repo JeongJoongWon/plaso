@@ -12,7 +12,7 @@ class CronTaskRunEventFormatter(interface.ConditionalEventFormatter):
 
   DATA_TYPE = 'syslog:cron:task_run'
 
-  FORMAT_STRING_SEPARATOR = ' '
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       'Cron ran: {command}',

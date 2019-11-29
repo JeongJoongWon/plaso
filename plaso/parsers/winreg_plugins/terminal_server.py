@@ -92,7 +92,7 @@ class TerminalServerClientPlugin(interface.WindowsRegistryPlugin):
     values_dict = self._GetValuesFromKey(registry_key)
 
     event_data = windows_events.WindowsRegistryEventData()
-    event_data.key_path = registry_key.path
+    event_data.key_path = (registry_key.path).replace("\\", "/")
     event_data.values = ' '.join([
         '{0:s}: {1!s}'.format(name, value)
         for name, value in sorted(values_dict.items())]) or None
@@ -141,7 +141,7 @@ class TerminalServerClientMRUPlugin(interface.WindowsRegistryPlugin):
 
     event_data = TerminalServerClientMRUEventData()
     event_data.entries = ' '.join(entries) or None
-    event_data.key_path = registry_key.path
+    event_data.key_path = (registry_key.path).replace("\\", "/")
 
     event = time_events.DateTimeValuesEvent(
         registry_key.last_written_time, definitions.TIME_DESCRIPTION_WRITTEN)

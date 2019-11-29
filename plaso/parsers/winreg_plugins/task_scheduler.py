@@ -137,7 +137,7 @@ class TaskCacheWindowsRegistryPlugin(
       name = task_guids.get(sub_key.name, sub_key.name)
 
       event_data = TaskCacheEventData()
-      event_data.key_path = registry_key.path
+      event_data.key_path = (registry_key.path).replace("\\", "/")
       event_data.task_name = name
       event_data.task_identifier = sub_key.name
 

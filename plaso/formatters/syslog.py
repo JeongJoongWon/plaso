@@ -12,7 +12,7 @@ class SyslogLineFormatter(interface.ConditionalEventFormatter):
 
   DATA_TYPE = 'syslog:line'
 
-  FORMAT_STRING_SEPARATOR = ''
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       '{severity} ',
@@ -29,7 +29,7 @@ class SyslogCommentFormatter(interface.ConditionalEventFormatter):
   """Formatter for a syslog comment"""
   DATA_TYPE = 'syslog:comment'
 
-  FORMAT_STRING_SEPARATOR = ''
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = ['{body}']
 

@@ -186,7 +186,7 @@ class MSIEZoneSettingsPlugin(interface.WindowsRegistryPlugin):
 
     # Generate an event for the key.
     event_data = windows_events.WindowsRegistryEventData()
-    event_data.key_path = registry_key.path
+    event_data.key_path = (registry_key.path).replace("\\", "/")
     event_data.values = ' '.join([
         '{0:s}: {1!s}'.format(name, value)
         for name, value in sorted(values_dict.items())]) or None
@@ -253,7 +253,7 @@ class MSIEZoneSettingsPlugin(interface.WindowsRegistryPlugin):
         settings.append(feature_control)
 
       event_data = MSIEZoneSettingsEventData()
-      event_data.key_path = path
+      event_data.key_path = (path).replace("\\", "/")
       event_data.settings = ' '.join(sorted(settings))
 
       event = time_events.DateTimeValuesEvent(

@@ -101,7 +101,7 @@ class WinlogonPlugin(interface.WindowsRegistryPlugin):
       event_data = WinlogonEventData()
       event_data.application = application
       event_data.command = command_value.GetDataAsObject()
-      event_data.key_path = registry_key.path
+      event_data.key_path = (registry_key.path).replace("\\", "/")
       event_data.trigger = 'Logon'
 
       event = time_events.DateTimeValuesEvent(

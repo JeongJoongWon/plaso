@@ -69,7 +69,7 @@ class WinRARHistoryPlugin(interface.WindowsRegistryPlugin):
 
     event_data = WinRARHistoryEventData()
     event_data.entries = ' '.join(entries) or None
-    event_data.key_path = registry_key.path
+    event_data.key_path = (registry_key.path).replace("\\", "/")
 
     event = time_events.DateTimeValuesEvent(
         registry_key.last_written_time, definitions.TIME_DESCRIPTION_WRITTEN)

@@ -126,7 +126,7 @@ class OfficeMRUPlugin(interface.WindowsRegistryPlugin):
         continue
 
       event_data = OfficeMRUWindowsRegistryEventData()
-      event_data.key_path = registry_key.path
+      event_data.key_path = (registry_key.path).replace("\\", "/")
       # TODO: split value string in individual values.
       event_data.value_string = value_string
 
@@ -144,7 +144,7 @@ class OfficeMRUPlugin(interface.WindowsRegistryPlugin):
 
     event_data = OfficeMRUListWindowsRegistryEventData()
     event_data.entries = ' '.join([value for value in entries]) or None
-    event_data.key_path = registry_key.path
+    event_data.key_path = (registry_key.path).replace("\\", "/")
 
     event = time_events.DateTimeValuesEvent(
         registry_key.last_written_time, definitions.TIME_DESCRIPTION_WRITTEN)

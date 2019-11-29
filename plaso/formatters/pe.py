@@ -10,7 +10,7 @@ from plaso.formatters import manager
 class PEEventFormatter(interface.ConditionalEventFormatter):
   """Parent class for PE event formatters."""
   DATA_TYPE = 'pe'
-  FORMAT_STRING_SEPARATOR = ' '
+  FORMAT_STRING_SEPARATOR = '|`'
 
   FORMAT_STRING_PIECES = [
       'PE Type: {pe_type}',

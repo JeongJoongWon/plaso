@@ -80,7 +80,7 @@ class MountPoints2Plugin(interface.WindowsRegistryPlugin):
         label = None
 
       event_data = MountPoints2EventData()
-      event_data.key_path = registry_key.path
+      event_data.key_path = (registry_key.path).replace("\\", "/")
       event_data.label = label
       event_data.name = name
       event_data.server_name = server_name

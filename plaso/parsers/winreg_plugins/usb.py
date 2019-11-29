@@ -58,7 +58,7 @@ class USBPlugin(interface.WindowsRegistryPlugin):
       registry_key (dfwinreg.WinRegistryKey): Windows Registry key.
     """
     event_data = WindowsUSBDeviceEventData()
-    event_data.key_path = registry_key.path
+    event_data.key_path = (registry_key.path).replace("\\", "/")
 
     for subkey in registry_key.GetSubkeys():
       event_data.subkey_name = subkey.name

@@ -122,7 +122,7 @@ class SymantecAVFormatter(interface.ConditionalEventFormatter):
       '13': 'Backed up file'}
 
   # The identifier for the formatter (a regular expression)
-  FORMAT_STRING_SEPARATOR = '; '
+  FORMAT_STRING_SEPARATOR = '|`'
   FORMAT_STRING_PIECES = [
       'Event Name: {event_map}',
       'Category Name: {category_map}',

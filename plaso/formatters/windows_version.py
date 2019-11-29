@@ -14,22 +14,31 @@ class WindowsRegistryInstallationEventFormatter(
   DATA_TYPE = 'windows:registry:installation'
 
   FORMAT_STRING_PIECES = [
-      '{product_name}',
-      '{version}',
-      '{build_number}',
-      '{service_pack}',
+      '[{key_path}]',
+      'Systemroot : {path}',
+      'Productname : {product_name}',
+      'CurrentVersion : {version}',
+      'BuildLabEx : {buildLab}',
+      'ProductId : {product_id}',
       'Owner: {owner}',
+      'InstallDate: {date}',
+      'InstallTime: {time}',
       'Origin: {key_path}']
 
   FORMAT_STRING_SHORT_PIECES = [
-      '{product_name}',
-      '{version}',
-      '{build_number}',
-      '{service_pack}',
+      '[{key_path}]',
+      'Systemroot : {path}',
+      'Productname : {product_name}',
+      'CurrentVersion : {version}',
+      'BuildLabEx : {buildLab}',
+      'ProductId : {product_id}',
+      'Owner: {owner}',
+      'InstallDate: {date}',
+      'InstallTime: {time}',
       'Origin: {key_path}']
 
-  SOURCE_LONG = 'System'
-  SOURCE_SHORT = 'LOG'
+  SOURCE_LONG = 'Registry Key: windows installation'
+  SOURCE_SHORT = 'REG'
 
 
 manager.FormattersManager.RegisterFormatter(
